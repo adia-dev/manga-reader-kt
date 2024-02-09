@@ -33,4 +33,22 @@ class MangaListViewModel(private val mangaRepository: MangaRepository) : ViewMod
             }
         }
     }
+
+    fun searchMangas(query: String) {
+        viewModelScope.launch {
+            try {
+                val mangas = mangaRepository.searchMangas(query)
+                if (mangas.isNullOrEmpty()) {
+                    _error.value = "No mangas found"
+                    Log.e("MangaListViewModel", "No mangas found")
+                    return@launch
+                }
+                _mangas.value = mangas!!
+                _error.value = null
+            } catch (e: Exception) {
+                _error.value = e.message
+                Log.e("MangaListViewModel", e.message ?: "Error")
+            }
+        }
+    }
 }

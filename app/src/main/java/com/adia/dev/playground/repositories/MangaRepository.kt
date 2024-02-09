@@ -4,9 +4,17 @@ import com.adia.dev.playground.models.Manga
 import com.adia.dev.playground.network.MangaApi
 
 class MangaRepository(private val mangaApi: MangaApi) {
+
+    companion object {
+        private const val LIMIT = 10
+        private const val OFFSET = 0
+        private val INCLUDES = listOf("cover_art")
+        private val CONTENT_RATING = listOf("safe")
+    }
+
     suspend fun getMangas(
-        limit: Int? = 10,
-        offset: Int? = 0,
+        limit: Int? = LIMIT,
+        offset: Int? = OFFSET,
         title: String? = null,
         authorOrArtist: String? = null,
         authors: List<String>? = null,
@@ -22,11 +30,11 @@ class MangaRepository(private val mangaApi: MangaApi) {
         availableTranslatedLanguage: List<String>? = null,
         publicationDemographic: List<String>? = null,
         ids: List<String>? = null,
-        contentRating: List<String>? = null,
+        contentRating: List<String>? = CONTENT_RATING,
         createdAtSince: String? = null,
         updatedAtSince: String? = null,
         order: Map<String, String> = emptyMap(),
-        includes: List<String>? = null,
+        includes: List<String>? = INCLUDES,
         hasAvailableChapters: String? = null,
         group: String? = null,
     ): List<Manga>? {
@@ -60,5 +68,9 @@ class MangaRepository(private val mangaApi: MangaApi) {
             return response.body()?.data
         }
         return null
+    }
+
+    suspend fun searchMangas(query: String): List<Manga>? {
+        return getMangas(title = query)
     }
 }
