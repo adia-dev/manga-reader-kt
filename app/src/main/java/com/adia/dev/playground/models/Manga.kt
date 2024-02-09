@@ -1,44 +1,122 @@
 package com.adia.dev.playground.models
 
+import com.google.gson.annotations.SerializedName
+
 data class Manga(
     val id: String,
-    val title: String,
-    val author: String,
-    val description: String,
-    val cover: String,
-    val status: String,
-    val genres: List<String> = emptyList()
+    val type: String,
+    val attributes: MangaAttributes,
+    val relationships: List<Relationship>,
 ) {
+
     companion object {
-        val EMPTY = Manga("", "", "", "", "", "", emptyList())
-        val DUMMY_LIST = listOf(
-            Manga(
-                "1",
-                "One Piece",
-                "Eiichiro Oda",
-                "One Piece is a Japanese manga series written and illustrated by Eiichiro Oda. It has been serialized in Shueisha's Weekly Shōnen Jump magazine since July 22, 1997, and has been collected into 98 tankōbon volumes as of February 2021. The story follows the adventures of Monkey D. Luffy",
-                "https://m.media-amazon.com/images/I/51z5W9Z6jHL.jpg",
-                "Ongoing",
-                listOf("Action", "Adventure", "Comedy", "Drama", "Fantasy", "Shounen"),
+        val EMPTY = Manga(
+            id = "",
+            type = "",
+            attributes = MangaAttributes(
+                title = mapOf(),
+                altTitles = emptyList(),
+                description = mapOf(),
+                language = "",
+                demographic = null,
+                year = null,
+                status = null,
+                contentRating = ContentRating.NONE,
+                tags = emptyList(),
             ),
-            Manga(
-                "2",
-                "Naruto",
-                "Masashi Kishimoto",
-                "Naruto is a Japanese manga series written and illustrated by Masashi Kishimoto. It tells the story of Naruto Uzumaki, a young ninja who seeks recognition from his peers and dreams of becoming the Hokage, the leader of his village.",
-                "https://m.media-amazon.com/images/I/51z5W9Z6jHL.jpg",
-                "Completed",
-                listOf("Action", "Adventure", "Comedy", "Drama", "Fantasy", "Shounen"),
-            ),
-            Manga(
-                "3",
-                "Bleach",
-                "Tite Kubo",
-                "Bleach is a Japanese manga series written and illustrated by Tite Kubo. Bleach follows the adventures of the hotheaded teenager Ichigo Kurosaki, who inherits his parents' destiny after he obtains the powers of a Soul Reaper",
-                "https://m.media-amazon.com/images/I/51z5W9Z6jHL.jpg",
-                "Completed",
-                listOf("Action", "Adventure", "Comedy", "Drama", "Fantasy", "Shounen"),
-            ),
+            relationships = emptyList()
         )
+
+        fun getCoverArtFilename(manga: Manga): String? {
+            return manga.relationships.find { it.type == "cover_art" }?.attributes?.get("fileName") as? String
+        }
+
     }
+
+    data class MangaResponse(
+        val result: String,
+        val response: String,
+        val total: Int,
+        val limit: Int,
+        val offset: Int,
+        val data: List<Manga>,
+    )
+
+    enum class PublicationDemographic {
+        @SerializedName("shounen")
+        SHONEN,
+
+        @SerializedName("shoujo")
+        SHOUJO,
+
+        @SerializedName("josei")
+        JOSEI,
+
+        @SerializedName("seinen")
+        SEINEN,
+        NONE
+    }
+
+    enum class Status {
+        @SerializedName("ongoing")
+        ONGOING,
+
+        @SerializedName("completed")
+        COMPLETED,
+
+        @SerializedName("hiatus")
+        CANCELLED,
+
+        @SerializedName("hiatus")
+        HIATUS,
+        NONE
+    }
+
+    enum class ContentRating {
+        @SerializedName("safe")
+        SAFE,
+
+        @SerializedName("suggestive")
+        SUGGESTIVE,
+
+        @SerializedName("erotica")
+        EROTICA,
+
+        @SerializedName("pornographic")
+        PORNOGRAPHIC,
+        NONE
+    }
+
+    data class Tag(
+        val id: String,
+        val type: String,
+        val attributes: TagAttributes,
+        val relationships: List<Relationship>,
+    )
+
+    data class TagAttributes(
+        val name: Map<String, String>,
+        val description: Map<String, String>,
+        val group: String,
+    )
+
+    data class Relationship(
+        val id: String,
+        val type: String,
+        val attributes: Map<String, Any?>,
+    )
+
+    data class MangaAttributes(
+        val title: Map<String, String>,
+        val altTitles: List<Map<String, String>>,
+        val description: Map<String, String>,
+        @SerializedName("originalLanguage")
+        val language: String,
+        @SerializedName("publicationDemographic")
+        val demographic: PublicationDemographic?,
+        val year: Int?,
+        val status: Status?,
+        val contentRating: ContentRating,
+        val tags: List<Tag>,
+    )
 }

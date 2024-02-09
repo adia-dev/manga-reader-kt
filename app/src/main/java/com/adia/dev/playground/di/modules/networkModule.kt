@@ -3,6 +3,7 @@ package com.adia.dev.playground.di.modules
 import android.content.Context
 import com.adia.dev.playground.R
 import com.adia.dev.playground.network.MangaApi
+import okhttp3.logging.HttpLoggingInterceptor
 import org.koin.dsl.module
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -15,9 +16,13 @@ val networkModule = module {
 
 fun provideRetrofit(context: Context): Retrofit {
     val baseUrl = context.getString(R.string.base_url)
+    val interceptor = HttpLoggingInterceptor().apply {
+        level = HttpLoggingInterceptor.Level.BODY
+    }
     return Retrofit.Builder()
         .baseUrl(baseUrl)
         .addConverterFactory(GsonConverterFactory.create())
+        .client(okhttp3.OkHttpClient.Builder().addInterceptor(interceptor).build())
         .build()
 }
 
