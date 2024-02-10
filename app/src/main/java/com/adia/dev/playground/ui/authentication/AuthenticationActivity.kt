@@ -16,6 +16,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.adia.dev.playground.MainActivity
 import com.adia.dev.playground.R
 import com.adia.dev.playground.databinding.ActivityAuthenticationBinding
+import com.adia.dev.playground.ui.explore.ExploreActivity
 
 class AuthenticationActivity : AppCompatActivity() {
 
@@ -143,7 +144,7 @@ class AuthenticationActivity : AppCompatActivity() {
             Toast.LENGTH_LONG
         ).show()
 
-        val intent = Intent(this@AuthenticationActivity, MainActivity::class.java)
+        val intent = Intent(this@AuthenticationActivity, ExploreActivity::class.java)
         startActivity(intent)
         finish()
 
