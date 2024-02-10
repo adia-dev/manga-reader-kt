@@ -10,6 +10,7 @@ import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.adia.dev.playground.adapters.MangaListAdapter
 import com.adia.dev.playground.databinding.FragmentMangaListBinding
 import kotlinx.coroutines.*
@@ -47,6 +48,16 @@ class MangaListFragment : Fragment(), CoroutineScope {
         binding.mangaListRecyclerView.layoutManager = GridLayoutManager(context, 3)
         binding.mangaListRecyclerView.adapter = adapter
 
+        binding.mangaListRecyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+
+                if (!recyclerView.canScrollVertically(1)) {
+                    showLoadMore()
+                }
+            }
+        })
+
 
         binding.searchEditText.addTextChangedListener {
             performSearch(it.toString())
@@ -81,6 +92,12 @@ class MangaListFragment : Fragment(), CoroutineScope {
         }
 
         viewModel.getMangas()
+    }
+
+    private fun showLoadMore() {
+        binding.loadMoreProgressBar.visibility = View.VISIBLE
+        viewModel.loadMoreMangas()
+        binding.loadMoreProgressBar.visibility = View.GONE
     }
 
     private fun performSearch(query: String) {
