@@ -33,13 +33,19 @@ data class Manga(
 
     }
 
-    data class MangaResponse(
+    data class MangasResponse(
         val result: String,
         val response: String,
         val total: Int,
         val limit: Int,
         val offset: Int,
         val data: List<Manga>,
+    )
+
+    data class MangaResponse(
+        val result: String,
+        val response: String,
+        val data: Manga,
     )
 
     enum class PublicationDemographic {

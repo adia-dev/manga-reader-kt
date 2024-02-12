@@ -1,11 +1,10 @@
 package com.adia.dev.playground.ui.home
 
+import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.inputmethod.EditorInfo
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
@@ -13,6 +12,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.adia.dev.playground.adapters.MangaListAdapter
 import com.adia.dev.playground.databinding.FragmentMangaListBinding
+import com.adia.dev.playground.models.Manga
+import com.adia.dev.playground.ui.details.MangaDetailsActivity
 import kotlinx.coroutines.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import kotlin.coroutines.CoroutineContext
@@ -44,7 +45,13 @@ class MangaListFragment : Fragment(), CoroutineScope {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val adapter = MangaListAdapter(emptyList())
+        val adapter = MangaListAdapter(emptyList(), object: MangaListAdapter.OnMangaClickListener {
+            override fun onMangaClick(manga: Manga) {
+                val intent = Intent(context, MangaDetailsActivity::class.java)
+                intent.putExtra("mangaId", manga.id)
+                startActivity(intent)
+            }
+        })
         binding.mangaListRecyclerView.layoutManager = GridLayoutManager(context, 3)
         binding.mangaListRecyclerView.adapter = adapter
 

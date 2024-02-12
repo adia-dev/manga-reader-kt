@@ -1,9 +1,10 @@
 package com.adia.dev.playground.network
 
-import com.adia.dev.playground.models.Manga.MangaResponse
-import retrofit2.Call
+import com.adia.dev.playground.models.Manga
+import com.adia.dev.playground.models.Manga.MangasResponse
 import retrofit2.Response
 import retrofit2.http.GET
+import retrofit2.http.Path
 import retrofit2.http.Query
 import retrofit2.http.QueryMap
 
@@ -34,5 +35,18 @@ interface MangaApi {
         @Query("includes[]") includes: List<String>? = null,
         @Query("hasAvailableChapters") hasAvailableChapters: String? = null,
         @Query("group") group: String? = null,
-    ): Response<MangaResponse>
+    ): Response<MangasResponse>
+
+    @GET("/manga/{id}")
+    suspend fun getManga(
+        @Path("id") id: String,
+        @Query("includes[]") includes: List<String>? = listOf("cover_art"),
+    ): Response<Manga.MangaResponse>
+
+    @GET("/manga/{id}/aggregate")
+    suspend fun getMangaWithVolumesAndChapters(
+        @Path("id") id: String,
+        @Query("translatedLanguage[]") includes: List<String>? = listOf("en"),
+    ): Response<MangasResponse>
+
 }

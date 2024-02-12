@@ -17,22 +17,31 @@ import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
 import com.facebook.shimmer.ShimmerFrameLayout
 
-class MangaListAdapter(private var mangas: List<Manga>) :
+class MangaListAdapter(private var mangas: List<Manga>, private val listener: OnMangaClickListener) :
     RecyclerView.Adapter<MangaListAdapter.MangaViewHolder>() {
 
     lateinit var context: Context
+
+    interface OnMangaClickListener {
+        fun onMangaClick(manga: Manga)
+    }
 
     class MangaViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         private val shimmerLayout: ShimmerFrameLayout =
             view.findViewById(R.id.shimmer_view_container)
         private val coverImage: ImageView = view.findViewById(R.id.coverImage)
 
-        fun bind(manga: Manga, context: Context) {
+        fun bind(manga: Manga, context: Context, listener: OnMangaClickListener) {
             itemView.findViewById<TextView>(R.id.title).apply {
                 this.text = manga.attributes.title["en"] ?: "No title"
             }
 
-            shimmerLayout.stopShimmer()
+            itemView.setOnClickListener {
+                listener.onMangaClick(manga)
+            }
+
+
+            shimmerLayout.startShimmer()
 
             val coverArtFilename = Manga.getCoverArtFilename(manga)
             val coverArtUrl =
@@ -81,7 +90,7 @@ class MangaListAdapter(private var mangas: List<Manga>) :
     }
 
     override fun onBindViewHolder(holder: MangaViewHolder, position: Int) {
-        holder.bind(mangas[position], context)
+        holder.bind(mangas[position], context, listener)
     }
 
     override fun getItemCount() = mangas.size

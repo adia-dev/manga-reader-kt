@@ -73,4 +73,20 @@ class MangaRepository(private val mangaApi: MangaApi) {
     suspend fun searchMangas(query: String): List<Manga>? {
         return getMangas(title = query)
     }
+
+    suspend fun getManga(id: String, includes: List<String>? = INCLUDES): Manga? {
+        val response = mangaApi.getManga(id, includes)
+        if (response.isSuccessful) {
+            return response.body()?.data
+        }
+        return null
+    }
+
+    suspend fun getMangaWithVolumesAndChapters(id: String, includes: List<String>? = listOf("en")): List<Manga>? {
+        val response = mangaApi.getMangaWithVolumesAndChapters(id, includes)
+        if (response.isSuccessful) {
+            return response.body()?.data
+        }
+        return null
+    }
 }
